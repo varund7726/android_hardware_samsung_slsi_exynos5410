@@ -494,6 +494,23 @@ void *ExynosJpegBase::getJpegConfig(void)
     return &t_stJpegConfig;
 }
 
+#ifdef USE_CHAR_BUFFERS
+int ExynosJpegBase::checkBufType(struct BUFFER *pstBuf)
+{
+    return 0;
+}
+
+int ExynosJpegBase::getBuf(bool bCreateBuf, struct BUFFER *pstBuf, char **piBuf, int *iBufSize, int iSize, int iPlaneNum)
+{
+    return 0;
+}
+
+int ExynosJpegBase::setBuf(struct BUFFER *pstBuf, char **piBuf, int *iSize, int iPlaneNum)
+{
+    return 0;
+}
+#endif
+
 int ExynosJpegBase::getBuf(bool bCreateBuf, struct BUFFER *pstBuf, int *piBuf, int *iBufSize, int iSize, int iPlaneNum)
 {
     if (t_bFlagCreate == false) {

@@ -72,6 +72,38 @@ int ExynosJpegEncoder::setJpegConfig(void *pConfig)
     return ExynosJpegBase::setJpegConfig(MODE_ENCODE, pConfig);
 }
 
+#ifdef USE_CHAR_BUFFERS
+int ExynosJpegEncoder::checkInBufType()
+{
+    return 0;
+}
+
+int ExynosJpegEncoder::checkOutBufType()
+{
+    return 0;
+}
+
+int ExynosJpegEncoder::getInBuf(char **piBuf, int *piInputSize, int iSize)
+{
+    return 0;
+}
+
+int ExynosJpegEncoder::getOutBuf(char **piBuf, int *piOutputSize)
+{
+    return 0;
+}
+
+int ExynosJpegEncoder::setInBuf(char **piBuf, int *iSize)
+{
+    return 0;
+}
+
+int ExynosJpegEncoder::setOutBuf(char *iBuf, int iSize)
+{
+    return 0;
+}
+#endif
+
  int ExynosJpegEncoder::getInBuf(int *piBuf, int *piInputSize, int iSize)
 {
     return getBuf(t_bFlagCreateInBuf, &t_stJpegInbuf, piBuf, piInputSize, iSize, t_iPlaneNum);

@@ -144,6 +144,11 @@ protected:
     int setJpegFormat(enum MODE eMode, int iV4l2JpegFormat);
     int setColorBufSize(enum MODE eMode, int *piBufSize, int iSize);
     int setColorBufSize(int iFormat, int *piBufSize, int iSize, int width, int height);
+#ifdef USE_CHAR_BUFFERS
+    int checkBufType(struct BUFFER *pstBuf);
+    int getBuf(bool bCreateBuf, struct BUFFER *pstBuf, char **piBuf, int *iBufSize, int iSize, int iPlaneNum);
+    int setBuf(struct BUFFER *pstBuf, char **piBuf, int *iSize, int iPlaneNum);
+#endif
     int getBuf(bool bCreateBuf, struct BUFFER *pstBuf, int *piBuf, int *iBufSize, int iSize, int iPlaneNum);
     int setBuf(struct BUFFER *pstBuf, int *piBuf, int *iSize, int iPlaneNum);
     int updateConfig(enum MODE eMode, int iInBufs, int iOutBufs, int iInBufPlanes, int iOutBufPlanes);
@@ -171,7 +176,16 @@ public:
     int     destroy(void);
 
     int     setJpegConfig(void* pConfig);
+#ifdef USE_CHAR_BUFFERS
+    int     checkInBufType();
+    int     checkOutBufType();
 
+    int     getInBuf(char **piBuf, int *piInputSize, int iSize);
+    int     getOutBuf(char **piBuf, int *piOutputSize);
+
+    int     setInBuf(char **piBuf, int *iSize);
+    int     setOutBuf(char *iBuf, int iSize);
+#endif
     int     getInBuf(int *piBuf, int *piInputSize, int iSize);
     int     getOutBuf(int *piBuf, int *piOutputSize);
 
