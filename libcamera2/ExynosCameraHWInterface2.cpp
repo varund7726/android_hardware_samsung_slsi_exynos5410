@@ -2101,7 +2101,7 @@ int ExynosCameraHWInterface2::registerStreamBuffers(uint32_t stream_id,
                     const private_handle_t *priv_handle = reinterpret_cast<const private_handle_t *>(registeringBuffers[i]);
                     if (targetParms->svcPlanes == 1) {
                         currentBuf.fd.extFd[0] = priv_handle->fd;
-                        currentBuf.size.extS[0] = priv_handle->size;
+                        currentBuf.size.extS[0] = priv_handle->uiAllocSize[0];
                         currentBuf.size.extS[1] = 0;
                         currentBuf.size.extS[2] = 0;
                     } else if (targetParms->svcPlanes == 2) {
@@ -2177,7 +2177,7 @@ int ExynosCameraHWInterface2::registerStreamBuffers(uint32_t stream_id,
                 if (currentNode->planes == 1) {
                     v4l2_buf.m.planes[0].m.fd = priv_handle->fd;
                     currentBuf.fd.extFd[0] = priv_handle->fd;
-                    currentBuf.size.extS[0] = priv_handle->size;
+                    currentBuf.size.extS[0] = priv_handle->uiAllocSize[0];
                     currentBuf.size.extS[1] = 0;
                     currentBuf.size.extS[2] = 0;
                 } else if (currentNode->planes == 2) {
