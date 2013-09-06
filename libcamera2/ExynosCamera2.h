@@ -64,18 +64,18 @@ public:
     int32_t    maxFaceCount;
 };
 
-struct ExynosCamera2InfoS5K4E5 : public ExynosCamera2Info
+struct ExynosCamera2InfoIMX135 : public ExynosCamera2Info
 {
 public:
-    ExynosCamera2InfoS5K4E5();
-	~ExynosCamera2InfoS5K4E5();
+    ExynosCamera2InfoIMX135();
+    ~ExynosCamera2InfoIMX135();
 };
 
-struct ExynosCamera2InfoS5K6A3 : public ExynosCamera2Info
+struct ExynosCamera2InfoS5K6B2 : public ExynosCamera2Info
 {
 public:
-    ExynosCamera2InfoS5K6A3();
-	~ExynosCamera2InfoS5K6A3();
+    ExynosCamera2InfoS5K6B2();
+    ~ExynosCamera2InfoS5K6B2();
 };
 
 class ExynosCamera2 {

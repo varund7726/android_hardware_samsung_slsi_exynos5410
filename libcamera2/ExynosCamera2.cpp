@@ -79,8 +79,6 @@ public:
 
 };
 
-
-
 const uint32_t Sensor::kAvailableSensitivities[6] =
     {0, 50, 100, 200, 400, 800};
 const nsecs_t Sensor::kExposureTimeRange[2] =
@@ -113,50 +111,69 @@ const uint64_t kAvailableJpegMinDurations[1] = {
     Sensor::kFrameDurationRange[0]
 };
 
-const uint32_t scalerResolutionS5K4E5[] =
+const uint32_t scalerResolutionIMX135[] =
 {
     1920, 1080, // 16:9
     1440, 1080, // 4:3
-    1440,  960, // 3:2
-    1280, 1024, // 5:4
     1280,  720, // 16:9
      960,  720, // 4:3
-     800,  480, // 5:3
-     768,  576, // 4:3
-     720,  576, // 5:4
+     800,  450, // 5:3
      720,  480, // 3:2
      640,  480, // 4:3
+     480,  320, // 3:2
      352,  288, // 11:9
      320,  240, // 4:3
-     240,  160, // 3:2
      176,  144, // 6:5
-     128,   96, // 4:3
 };
 
-const uint32_t jpegResolutionS5K4E5[] =
+const uint32_t jpegResolutionIMX135[] =
 {
+    4128, 3096,
+    4128, 2322,
+    4096, 3072,
+    4096, 2304,
+    3264, 2448,
+    3264, 1836,
+    3200, 2400,
+    3072, 1728,
+    2592, 1944,
     2560, 1920,
-    2560, 1440,
-    2160, 1440,
     2048, 1536,
     2048, 1152,
+    2032, 1142,
+    1920, 1080,
     1600, 1200,
-    1536,  864,
-    1280, 1024,
+    1440, 1080,
+    1392, 1392,
     1280,  960,
-    1152,  864,
+    1280,  720,
+    1024,  768,
+    1008,  566,
+     800,  600,
+     800,  480,
+     800,  450,
+     720,  480,
      640,  480,
+     528,  432,
+     512,  384,
+     512,  288,
+     480,  320,
+     352,  288,
      320,  240,
+     320,  180,
 };
 
-const uint32_t thumbnailResolutionS5K4E5[] =
+const uint32_t thumbnailResolutionIMX135[] =
 {
-     160,  120,
-     160,   90,
-     144,   96,
+     512,  384,
+     512,  288,
+     480,  320,
+     352,  288,
+     320,  240,
+     320,  180,
 };
 
-const uint8_t availableAfModesS5K4E5[] =
+const uint8_t availableAfModesIMX135[] =
 {
     ANDROID_CONTROL_AF_MODE_OFF,
     ANDROID_CONTROL_AF_MODE_AUTO,
@@ -165,7 +182,7 @@ const uint8_t availableAfModesS5K4E5[] =
     ANDROID_CONTROL_AF_MODE_CONTINUOUS_VIDEO
 };
 
-const uint8_t sceneModeOverridesS5K4E5[] =
+const uint8_t sceneModeOverridesIMX135[] =
 {
     /* ANDROID_CONTROL_SCENE_MODE_PORTRAIT */
     ANDROID_CONTROL_AE_MODE_ON,
@@ -225,89 +242,100 @@ const uint8_t sceneModeOverridesS5K4E5[] =
     ANDROID_CONTROL_AF_MODE_MACRO
 };
 
-const uint8_t availableAeModesS5K4E5[] =
+const uint8_t availableAeModesIMX135[] =
 {
     ANDROID_CONTROL_AE_MODE_OFF,
     ANDROID_CONTROL_AE_MODE_ON,
     ANDROID_CONTROL_AE_MODE_ON_AUTO_FLASH
 };
 
-ExynosCamera2InfoS5K4E5::ExynosCamera2InfoS5K4E5()
+ExynosCamera2InfoIMX135::ExynosCamera2InfoIMX135()
 {
-    sensorW             = 2560;
-    sensorH             = 1920;
-    sensorRawW          = (2560 + 16);
-    sensorRawH          = (1920 + 10);
-    numScalerResolution = ARRAY_SIZE(scalerResolutionS5K4E5)/2;
-    scalerResolutions   = scalerResolutionS5K4E5;
-    numJpegResolution   = ARRAY_SIZE(jpegResolutionS5K4E5)/2;
-    jpegResolutions     = jpegResolutionS5K4E5;
-    numThumbnailResolution   = ARRAY_SIZE(thumbnailResolutionS5K4E5)/2;
-    thumbnailResolutions     = thumbnailResolutionS5K4E5;
+    sensorW             = 4128;
+    sensorH             = 3096;
+    sensorRawW          = (4128 + 16);
+    sensorRawH          = (3096 + 10);
+    numScalerResolution = ARRAY_SIZE(scalerResolutionIMX135)/2;
+    scalerResolutions   = scalerResolutionIMX135;
+    numJpegResolution   = ARRAY_SIZE(jpegResolutionIMX135)/2;
+    jpegResolutions     = jpegResolutionIMX135;
+    numThumbnailResolution   = ARRAY_SIZE(thumbnailResolutionIMX135)/2;
+    thumbnailResolutions     = thumbnailResolutionIMX135;
     minFocusDistance    = 0.1f;
-    focalLength         = 3.43f;
-    aperture            = 2.7f;
-    fnumber             = 2.7f;
-    availableAfModes    = availableAfModesS5K4E5;
-    numAvailableAfModes = ARRAY_SIZE(availableAfModesS5K4E5);
-    sceneModeOverrides  = sceneModeOverridesS5K4E5;
-    numSceneModeOverrides = ARRAY_SIZE(sceneModeOverridesS5K4E5);
-    availableAeModes    = availableAeModesS5K4E5;
-    numAvailableAeModes = ARRAY_SIZE(availableAeModesS5K4E5);
+    focalLength         = 4.20f;
+    aperture            = 2.27f;
+    fnumber             = 2.2f;
+    availableAfModes    = availableAfModesIMX135;
+    numAvailableAfModes = ARRAY_SIZE(availableAfModesIMX135);
+    sceneModeOverrides  = sceneModeOverridesIMX135;
+    numSceneModeOverrides = ARRAY_SIZE(sceneModeOverridesIMX135);
+    availableAeModes    = availableAeModesIMX135;
+    numAvailableAeModes = ARRAY_SIZE(availableAeModesIMX135);
 }
 
-ExynosCamera2InfoS5K4E5::~ExynosCamera2InfoS5K4E5()
+ExynosCamera2InfoIMX135::~ExynosCamera2InfoIMX135()
 {
     ALOGV("%s", __FUNCTION__);
 }
-const uint32_t scalerResolutionS5K6A3[] =
+
+const uint32_t scalerResolutionS5K6B2[] =
 {
-    1344,  896, // 3:2
-    1280, 1024, // 5:4
-    1024, 1024, // 1:1
+    1920, 1080, // 16:9
+    1440, 1080, // 4:3
     1280,  960, // 4:3
-    1280,  720, // 16:9
-     960,  720, // 4:3
+    1056,  864, // 11:9
+    1024,  768, // 4:3
+     800,  600, // 4:3
      800,  480, // 5:3
-     768,  576, // 4:3
-     720,  576, // 5:4
+     800,  450, // 16:9
      720,  480, // 3:2
      640,  480, // 4:3
+     528,  432, // 11:9
+     480,  320, // 3:2
+     480,  270, // 16:9
      352,  288, // 11:9
      320,  240, // 4:3
-     240,  160, // 3:2
      176,  144, // 6:5
-     128,   96, // 4:3
 };
 
-const uint32_t jpegResolutionS5K6A3[] =
+const uint32_t jpegResolutionS5K6B2[] =
 {
-    1392, 1392,
-    1392, 1040,
-    1392,  928,
-    1392,  784,
-    1280, 1024,
+    1920, 1080,
+    1440, 1080,
     1280,  960,
     1280,  720,
-    1152,  864,
+    1024,  768,
+    1008,  566,
+     800,  600,
+     800,  480,
+     800,  450,
+     720,  480,
      640,  480,
+     528,  432,
+     512,  312,
+     512,  288,
+     480,  320,
+     352,  288,
      320,  240,
+     320,  180,
 };
 
-const uint32_t thumbnailResolutionS5K6A3[] =
+const uint32_t thumbnailResolutionS5K6B2[] =
 {
-     160,  120,
-     160,  160,
-     160,   90,
-     144,   96,
+     512,  384,
+     512,  288,
+     480,  320,
+     352,  288,
+     320,  240,
+     320,  180,
 };
 
-const uint8_t availableAfModesS5K6A3[] =
+const uint8_t availableAfModesS5K6B2[] =
 {
     ANDROID_CONTROL_AF_MODE_OFF
 };
 
-const uint8_t sceneModeOverridesS5K6A3[] =
+const uint8_t sceneModeOverridesS5K6B2[] =
 {
     /* ANDROID_CONTROL_SCENE_MODE_PORTRAIT */
     ANDROID_CONTROL_AE_MODE_ON,
@@ -367,37 +395,37 @@ const uint8_t sceneModeOverridesS5K6A3[] =
     ANDROID_CONTROL_AF_MODE_OFF
 };
 
-const uint8_t availableAeModesS5K6A3[] =
+const uint8_t availableAeModesS5K6B2[] =
 {
     ANDROID_CONTROL_AE_MODE_OFF,
     ANDROID_CONTROL_AE_MODE_ON
 };
 
-ExynosCamera2InfoS5K6A3::ExynosCamera2InfoS5K6A3()
+ExynosCamera2InfoS5K6B2::ExynosCamera2InfoS5K6B2()
 {
-    sensorW     = 1392;
-    sensorH     = 1392;
-    sensorRawW  = (1392 + 16);
-    sensorRawH  = (1392 + 10);
-    numScalerResolution = ARRAY_SIZE(scalerResolutionS5K6A3)/2;
-    scalerResolutions   = scalerResolutionS5K6A3;
-    numJpegResolution   = ARRAY_SIZE(jpegResolutionS5K6A3)/2;
-    jpegResolutions     = jpegResolutionS5K6A3;
-    numThumbnailResolution   = ARRAY_SIZE(thumbnailResolutionS5K6A3)/2;
-    thumbnailResolutions     = thumbnailResolutionS5K6A3;
+    sensorW     = 1920;
+    sensorH     = 1080;
+    sensorRawW  = (1920 + 16);
+    sensorRawH  = (1080 + 10);
+    numScalerResolution = ARRAY_SIZE(scalerResolutionS5K6B2)/2;
+    scalerResolutions   = scalerResolutionS5K6B2;
+    numJpegResolution   = ARRAY_SIZE(jpegResolutionS5K6B2)/2;
+    jpegResolutions     = jpegResolutionS5K6B2;
+    numThumbnailResolution   = ARRAY_SIZE(thumbnailResolutionS5K6B2)/2;
+    thumbnailResolutions     = thumbnailResolutionS5K6B2;
     minFocusDistance    = 0.0f;
-    focalLength         = 2.73f;
-    aperture            = 2.8f;
-    fnumber             = 2.8f;
-    availableAfModes    = availableAfModesS5K6A3;
-    numAvailableAfModes = ARRAY_SIZE(availableAfModesS5K6A3);
-    sceneModeOverrides  = sceneModeOverridesS5K6A3;
-    numSceneModeOverrides = ARRAY_SIZE(sceneModeOverridesS5K6A3);
-    availableAeModes    = availableAeModesS5K6A3;
-    numAvailableAeModes = ARRAY_SIZE(availableAeModesS5K6A3);
+    focalLength         = 1.85f;
+    aperture            = 2.45f;
+    fnumber             = 2.45f;
+    availableAfModes    = availableAfModesS5K6B2;
+    numAvailableAfModes = ARRAY_SIZE(availableAfModesS5K6B2);
+    sceneModeOverrides  = sceneModeOverridesS5K6B2;
+    numSceneModeOverrides = ARRAY_SIZE(sceneModeOverridesS5K6B2);
+    availableAeModes    = availableAeModesS5K6B2;
+    numAvailableAeModes = ARRAY_SIZE(availableAeModesS5K6B2);
 }
 
-ExynosCamera2InfoS5K6A3::~ExynosCamera2InfoS5K6A3()
+ExynosCamera2InfoS5K6B2::~ExynosCamera2InfoS5K6B2()
 {
     ALOGV("%s", __FUNCTION__);
 }
@@ -405,15 +433,15 @@ ExynosCamera2::ExynosCamera2(int cameraId):
     m_cameraId(cameraId)
 {
     if (cameraId == 0)
-        m_curCameraInfo      = new ExynosCamera2InfoS5K4E5;
+        m_curCameraInfo      = new ExynosCamera2InfoIMX135;
     else
-        m_curCameraInfo      = new ExynosCamera2InfoS5K6A3;
+        m_curCameraInfo      = new ExynosCamera2InfoS5K6B2;
 }
 
 ExynosCamera2::~ExynosCamera2()
 {
     ALOGV("%s", __FUNCTION__);
-	delete m_curCameraInfo;
+    delete m_curCameraInfo;
     m_curCameraInfo = NULL;
 }
 

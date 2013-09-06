@@ -1313,7 +1313,7 @@ int ExynosCameraHWInterface2::InitializeISPChain()
 
     /* Open ISP */
     memset(&node_name, 0x00, sizeof(char[30]));
-    sprintf(node_name, "%s%d", NODE_PREFIX, 41);
+    sprintf(node_name, "%s%d", NODE_PREFIX, 44);
     fd = exynos_v4l2_open(node_name, O_RDWR, 0);
 
     if (fd < 0) {
@@ -1326,7 +1326,7 @@ int ExynosCameraHWInterface2::InitializeISPChain()
 
     /* Open ScalerC */
     memset(&node_name, 0x00, sizeof(char[30]));
-    sprintf(node_name, "%s%d", NODE_PREFIX, 42);
+    sprintf(node_name, "%s%d", NODE_PREFIX, 45);
     fd = exynos_v4l2_open(node_name, O_RDWR, 0);
 
     if (fd < 0) {
@@ -1339,7 +1339,7 @@ int ExynosCameraHWInterface2::InitializeISPChain()
 
     /* Open ScalerP */
     memset(&node_name, 0x00, sizeof(char[30]));
-    sprintf(node_name, "%s%d", NODE_PREFIX, 44);
+    sprintf(node_name, "%s%d", NODE_PREFIX, 46);
     fd = exynos_v4l2_open(node_name, O_RDWR, 0);
     if (fd < 0) {
         ALOGE("DEBUG(%s): failed to open preview video node (%s) fd (%d)", __FUNCTION__,node_name, fd);
@@ -1350,9 +1350,9 @@ int ExynosCameraHWInterface2::InitializeISPChain()
     m_camera_info.scp.fd = fd;
 
     if(m_cameraId == 0)
-        m_camera_info.sensor_id = SENSOR_NAME_S5K4E5;
+        m_camera_info.sensor_id = SENSOR_NAME_IMX135;
     else
-        m_camera_info.sensor_id = SENSOR_NAME_S5K6A3;
+        m_camera_info.sensor_id = SENSOR_NAME_S5K6B2;
 
     memset(&m_camera_info.dummy_shot, 0x00, sizeof(struct camera2_shot_ext));
     m_camera_info.dummy_shot.shot.ctl.request.metadataMode = METADATA_MODE_FULL;
@@ -1416,7 +1416,7 @@ int ExynosCameraHWInterface2::InitializeISPChain()
     };
 
     /* init ISP */
-    ret = cam_int_s_input(&(m_camera_info.isp), m_camera_info.sensor_id);
+    ret = cam_int_s_input(&(m_camera_info.isp), (m_camera_info.sensor_id | 0x300));
     if (ret < 0) {
         ALOGE("ERR(%s): cam_int_s_input(%d) failed!!!! ",  __FUNCTION__, m_camera_info.sensor_id);
         return false;
@@ -5213,7 +5213,7 @@ void ExynosCameraHWInterface2::m_setExifFixedAttribute(void)
 }
 
 void ExynosCameraHWInterface2::m_setExifChangedAttribute(exif_attribute_t *exifInfo, ExynosRect *rect,
-	camera2_shot_ext *currentEntry)
+        camera2_shot_ext *currentEntry)
 {
     camera2_dm *dm = &(currentEntry->shot.dm);
     camera2_ctl *ctl = &(currentEntry->shot.ctl);
