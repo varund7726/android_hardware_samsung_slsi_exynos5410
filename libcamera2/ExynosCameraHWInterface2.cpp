@@ -1406,7 +1406,7 @@ int ExynosCameraHWInterface2::InitializeISPChain()
     for(i = 0; i < m_camera_info.sensor.buffers; i++){
         initCameraMemory(&m_camera_info.sensor.buffer[i], m_camera_info.sensor.planes);
         m_camera_info.sensor.buffer[i].size.extS[0] = m_camera_info.sensor.width*m_camera_info.sensor.height*2;
-        m_camera_info.sensor.buffer[i].size.extS[1] = 8*1024; // HACK, driver use 8*1024, should be use predefined value
+        m_camera_info.sensor.buffer[i].size.extS[1] = 16*1024; // HACK, driver use 16*1024, should be use predefined value
         allocCameraMemory(m_ionCameraClient, &m_camera_info.sensor.buffer[i], m_camera_info.sensor.planes, 1<<1);
     }
 
@@ -1517,7 +1517,7 @@ void ExynosCameraHWInterface2::StartSCCThread(bool threadExists)
             for (int i = 0; i < m_camera_info.capture.buffers; i++){
                 initCameraMemory(&m_camera_info.capture.buffer[i], newParameters.node->planes);
                 m_camera_info.capture.buffer[i].size.extS[0] = m_camera_info.capture.width*m_camera_info.capture.height*2;
-                m_camera_info.capture.buffer[i].size.extS[1] = 4*1024; // HACK, driver use 4*1024, should be use predefined value
+                m_camera_info.capture.buffer[i].size.extS[1] = 16*1024; // HACK, driver use 16*1024, should be use predefined value
                 allocCameraMemory(m_ionCameraClient, &m_camera_info.capture.buffer[i], m_camera_info.capture.planes, 1<<1);
                 m_sccLocalBuffer[i] = m_camera_info.capture.buffer[i];
             }
@@ -2221,7 +2221,7 @@ int ExynosCameraHWInterface2::registerStreamBuffers(uint32_t stream_id,
                 if (i < currentNode->buffers) {
 
                     /* add plane for metadata*/
-                    metaBuf.size.extS[0] = 4*1024;
+                    metaBuf.size.extS[0] = 16*1024;
                     allocCameraMemory(m_ionCameraClient , &metaBuf, 1, 1<<0);
 
                     v4l2_buf.length += targetStreamParms->metaPlanes;
