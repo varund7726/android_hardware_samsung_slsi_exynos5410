@@ -150,6 +150,8 @@ typedef struct camera_hw_info {
 
     node_info_t sensor;
     node_info_t isp;
+    node_info_t is3a0;
+    node_info_t is3a1;
     node_info_t capture;
     node_info_t scp;
 

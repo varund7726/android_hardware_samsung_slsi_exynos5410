@@ -1324,6 +1324,19 @@ int ExynosCameraHWInterface2::InitializeISPChain()
     }
     m_camera_info.isp.fd = fd;
 
+    /* Open IS3A1 */
+    memset(&node_name, 0x00, sizeof(char[30]));
+    sprintf(node_name, "%s%d", NODE_PREFIX, 43);
+    fd = exynos_v4l2_open(node_name, O_RDWR, 0);
+
+    if (fd < 0) {
+        ALOGE("ERR(%s): failed to open is3a1 video node (%s) fd (%d)", __FUNCTION__,node_name, fd);
+    }
+    else {
+        ALOGV("DEBUG(%s): is3a1 video node opened(%s) fd (%d)", __FUNCTION__,node_name, fd);
+    }
+    m_camera_info.is3a1.fd = fd;
+
     /* Open ScalerC */
     memset(&node_name, 0x00, sizeof(char[30]));
     sprintf(node_name, "%s%d", NODE_PREFIX, 45);
