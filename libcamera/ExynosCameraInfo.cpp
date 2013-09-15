@@ -25,6 +25,9 @@ namespace android {
 
 ExynosCameraInfo::ExynosCameraInfo()
 {
+    cameraInfo.facing = CAMERA_FACING_BACK;
+    cameraInfo.orientation = 0;
+
     previewW = 2560;
     previewH = 1920;
     previewColorFormat = V4L2_PIX_FMT_NV21;
@@ -159,6 +162,9 @@ ExynosCameraInfo::ExynosCameraInfo()
 
 ExynosCameraInfoIMX135::ExynosCameraInfoIMX135()
 {
+    cameraInfo.facing = CAMERA_FACING_BACK;
+    cameraInfo.orientation = 0;
+
     previewW = 1920;
     previewH = 1080;
     previewColorFormat = V4L2_PIX_FMT_NV21;
@@ -253,6 +259,9 @@ ExynosCameraInfoIMX135::ExynosCameraInfoIMX135()
 
 ExynosCameraInfoS5K6B2::ExynosCameraInfoS5K6B2()
 {
+    cameraInfo.facing = CAMERA_FACING_FRONT;
+    cameraInfo.orientation = 0;
+
     previewW = 1920;
     previewH = 1080;
     previewColorFormat = V4L2_PIX_FMT_NV21;

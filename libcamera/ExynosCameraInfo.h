@@ -116,6 +116,9 @@ enum JPEG_QUALITY {
 struct ExynosCameraInfo
 {
 public:
+    // HAL camera info
+    camera_info_t cameraInfo;
+
     // Google Official API : Camera.Parameters
     // http://developer.android.com/reference/android/hardware/Camera.Parameters.html
     int  previewW;
