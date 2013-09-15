@@ -37,11 +37,21 @@ enum sensor_name {
 class ExynosCameraHWInterface : public virtual RefBase {
 public:
     ExynosCameraHWInterface(int cameraId, camera_device_t *dev);
-    virtual             ~ExynosCameraHWInterface();
+    virtual                 ~ExynosCameraHWInterface();
 
+    virtual void            setCallbacks(camera_notify_callback notify_cb,
+                                    camera_data_callback data_cb,
+                                    camera_data_timestamp_callback data_cb_timestamp,
+                                    camera_request_memory get_memory,
+                                    void *user);
 
 
 private:
+    camera_notify_callback  m_notifyCb;
+    camera_data_callback    m_dataCb;
+    camera_data_timestamp_callback m_dataCbTimestamp;
+    camera_request_memory   m_getMemoryCb;
+    void                    *m_callbackCookie;
 
 };
 

@@ -35,4 +35,17 @@ ExynosCameraHWInterface::~ExynosCameraHWInterface()
 
 }
 
+void ExynosCameraHWInterface::setCallbacks(camera_notify_callback notify_cb,
+        camera_data_callback data_cb,
+        camera_data_timestamp_callback data_cb_timestamp,
+        camera_request_memory get_memory,
+        void *user)
+{
+    m_notifyCb = notify_cb;
+    m_dataCb = data_cb;
+    m_dataCbTimestamp = data_cb_timestamp;
+    m_getMemoryCb = get_memory;
+    m_callbackCookie = user;
+}
+
 }; // namespace android
