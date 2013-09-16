@@ -39,11 +39,14 @@ public:
     ExynosCameraHWInterface(int cameraId, camera_device_t *dev);
     virtual                 ~ExynosCameraHWInterface();
 
+    virtual void            setPreviewWindow(preview_stream_ops *ops);
     virtual void            setCallbacks(camera_notify_callback notify_cb,
                                     camera_data_callback data_cb,
                                     camera_data_timestamp_callback data_cb_timestamp,
                                     camera_request_memory get_memory,
                                     void *user);
+    virtual void            startPreview();
+    virtual void            stopPreview();
 
 
 private:

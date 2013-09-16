@@ -56,9 +56,10 @@ static inline ExynosCameraHWInterface *obj(struct camera_device *dev)
 
 /** Set the preview_stream_ops to which preview frames are sent */
 static int HAL_camera_device_set_preview_window(struct camera_device *dev,
-                                                struct preview_stream_ops *buf)
+                                                struct preview_stream_ops *ops)
 {
     ALOGV("DEBUG(%s):", __func__);
+    obj(dev)->setPreviewWindow(ops);
 }
 
 /** Set the notification and data callbacks */
@@ -67,9 +68,11 @@ static void HAL_camera_device_set_callbacks(struct camera_device *dev,
         camera_data_callback data_cb,
         camera_data_timestamp_callback data_cb_timestamp,
         camera_request_memory get_memory,
-        void* user)
+        void *user)
 {
     ALOGV("DEBUG(%s):", __func__);
+    obj(dev)->setCallbacks(notify_cb, data_cb, data_cb_timestamp, get_memory,
+            user);
 }
 
 /**
@@ -117,7 +120,7 @@ static int HAL_camera_device_msg_type_enabled(struct camera_device *dev, int32_t
 static int HAL_camera_device_start_preview(struct camera_device *dev)
 {
     ALOGV("DEBUG(%s):", __func__);
-    return 0;
+    return obj(dev)->startPreview();
 }
 
 /**
@@ -126,7 +129,7 @@ static int HAL_camera_device_start_preview(struct camera_device *dev)
 static void HAL_camera_device_stop_preview(struct camera_device *dev)
 {
     ALOGV("DEBUG(%s):", __func__);
-    return 0;
+    return obj(dev)->stopPreview();
 }
 
 /**

@@ -35,6 +35,11 @@ ExynosCameraHWInterface::~ExynosCameraHWInterface()
 
 }
 
+status_t ExynosCameraHWInterface::setPreviewWindow(preview_stream_ops *ops)
+{
+    return 0;
+}
+
 void ExynosCameraHWInterface::setCallbacks(camera_notify_callback notify_cb,
         camera_data_callback data_cb,
         camera_data_timestamp_callback data_cb_timestamp,
@@ -46,6 +51,16 @@ void ExynosCameraHWInterface::setCallbacks(camera_notify_callback notify_cb,
     m_dataCbTimestamp = data_cb_timestamp;
     m_getMemoryCb = get_memory;
     m_callbackCookie = user;
+}
+
+status_t ExynosCameraHWInterface::startPreview()
+{
+    return 0;
+}
+
+status_t ExynosCameraHWInterface::stopPreview()
+{
+    return 0;
 }
 
 }; // namespace android
