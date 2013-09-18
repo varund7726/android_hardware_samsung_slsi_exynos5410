@@ -23,6 +23,59 @@
 
 namespace android {
 
+#define NODE_PREFIX                 "/dev/video"
+#define VIDEO_NODE_SENSOR0          (40)
+#define VIDEO_NODE_SENSOR1          (41)
+#define VIDEO_NODE_IS3A0            (42)
+#define VIDEO_NODE_IS3A1            (43)
+#define VIDEO_NODE_ISP              (44)
+#define VIDEO_NODE_SCALERC          (45)
+#define VIDEO_NODE_SCALERP          (46)
+
+#define NUM_MAX_CAMERA_BUFFERS      (16)
+#define NUM_SENSOR_BUFFERS          (8)
+#define NUM_SCC_BUFFERS             (8)
+#define NUM_SCP_BUFFERS             (8)
+#define NUM_MIN_SENSOR_QBUF         (3)
+
+enum sensor_name {
+    SENSOR_NAME_S5K3H2  = 1,
+    SENSOR_NAME_S5K6A3  = 2,
+    SENSOR_NAME_S5K4E5  = 3,
+    SENSOR_NAME_S5K3H7  = 4,
+    SENSOR_NAME_CUSTOM  = 5,
+    SENSOR_NAME_UNKWN0  = 6,
+    SENSOR_NAME_UNKWN1  = 7,
+    SENSOR_NAME_IMX135  = 8,
+    SENSOR_NAME_S5K6B2  = 9,
+    SENSOR_NAME_END
+};
+
+typedef struct node_info {
+    int fd;
+    int width;
+    int height;
+    int format;
+    int planes;
+    int buffers;
+    enum v4l2_memory memory;
+    enum v4l2_buf_type type;
+    ExynosBuffer buffer[NUM_MAX_CAMERA_BUFFERS];
+    int status;
+} node_info_t;
+
+typedef struct camera_hw_info {
+    int sensor_id;
+
+    node_info_t sensor0;
+    node_info_t sensor1;
+    node_info_t isp;
+    node_info_t is3a0;
+    node_info_t is3a1;
+    node_info_t scc; // capture
+    node_info_t scp;
+} camera_hw_info_t;
+
 class ExynosCamera : public virtual RefBase {
 
 private:
@@ -44,7 +97,9 @@ private:
     int                     initializeIspChain(void);
 
     int                     m_cameraId;
+    camera_hw_info_t        m_cameraHwInfo;
     ExynosCameraInfo        *m_cameraInfo;
+    ion_client              m_ionClient;
 };
 
 }; // namespace android
