@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#ifdef _EXYNOS_CAMERA_H_
+#ifndef _EXYNOS_CAMERA_H_
 #define _EXYNOS_CAMERA_H_
 
 #include <hardware/camera.h>
