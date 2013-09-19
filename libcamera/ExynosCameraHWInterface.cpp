@@ -55,12 +55,12 @@ void ExynosCameraHWInterface::setCallbacks(camera_notify_callback notify_cb,
 
 status_t ExynosCameraHWInterface::startPreview()
 {
-    return 0;
+    return OK;
 }
 
 status_t ExynosCameraHWInterface::stopPreview()
 {
-    return 0;
+    return OK;
 }
 
 }; // namespace android
