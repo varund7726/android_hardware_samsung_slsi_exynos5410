@@ -16,12 +16,13 @@
 
 #include "ExynosCameraInfo.h"
 
+#include "videodev2.h"
+#include "videodev2_exynos_media.h"
+#include "videodev2_exynos_camera.h"
+
 #define LOG_TAG "ExynosCameraInfo"
 
-using namespace android;
-
 namespace android {
-
 
 ExynosCameraInfo::ExynosCameraInfo()
 {
@@ -33,8 +34,6 @@ ExynosCameraInfo::ExynosCameraInfo()
     previewColorFormat = V4L2_PIX_FMT_NV21;
     videoW = 1920;
     videoH = 1080;
-    prefVideoPreviewW = 640;
-    prefVideoPreviewH = 360;
     videoColorFormat = V4L2_PIX_FMT_NV12M;
     pictureW = 2560;
     pictureH = 1920;
@@ -170,8 +169,6 @@ ExynosCameraInfoIMX135::ExynosCameraInfoIMX135()
     previewColorFormat = V4L2_PIX_FMT_NV21;
     videoW = 1920;
     videoH = 1080;
-    prefVideoPreviewW = 1920;
-    prefVideoPreviewH = 1080;
     videoColorFormat = V4L2_PIX_FMT_NV12M;
     pictureW = 4128;
     pictureH = 2322;
@@ -267,8 +264,6 @@ ExynosCameraInfoS5K6B2::ExynosCameraInfoS5K6B2()
     previewColorFormat = V4L2_PIX_FMT_NV21;
     videoW = 1920;
     videoH = 1080;
-    prefVideoPreviewW = 1920;
-    prefVideoPreviewH = 1080;
     videoColorFormat = V4L2_PIX_FMT_NV12M;
     pictureW = 1920;
     pictureH = 1080;

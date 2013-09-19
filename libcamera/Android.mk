@@ -27,9 +27,9 @@ LOCAL_C_INCLUDES += \
 	system/media/camera/include
 
 LOCAL_SRC_FILES:= \
-	SignalDrivenThread.cpp \
 	MetadataConverter.cpp \
 	ExynosJpegEncoderForCamera.cpp \
+	ExynosCameraInfo.cpp \
 	ExynosCamera.cpp \
 	ExynosCameraHWInterface.cpp \
 	ExynosCameraModule.cpp

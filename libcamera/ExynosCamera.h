@@ -18,6 +18,12 @@
 #define _EXYNOS_CAMERA_H_
 
 #include <hardware/camera.h>
+#include <utils/RefBase.h>
+
+#include "exynos_v4l2.h"
+#include "ExynosBuffer.h"
+#include "ion.h"
+#include "videodev2_exynos_camera.h"
 
 #include "ExynosCameraInfo.h"
 
@@ -51,6 +57,11 @@ enum sensor_name {
     SENSOR_NAME_END
 };
 
+typedef struct node_buffer {
+    bool valid;
+    ExynosBuffer buf;
+} node_buffer_t;
+
 typedef struct node_info {
     int fd;
     int width;
@@ -60,7 +71,7 @@ typedef struct node_info {
     int buffers;
     enum v4l2_memory memory;
     enum v4l2_buf_type type;
-    ExynosBuffer buffer[NUM_MAX_CAMERA_BUFFERS];
+    node_buffer_t buffer[NUM_MAX_CAMERA_BUFFERS];
     int status;
 } node_info_t;
 
@@ -73,7 +84,7 @@ typedef struct camera_hw_info {
     node_info_t is3a0;
     node_info_t is3a1;
     node_info_t scc; // capture
-    node_info_t scp;
+    node_info_t scp; // preview
 } camera_hw_info_t;
 
 class ExynosCamera : public virtual RefBase {
@@ -93,12 +104,22 @@ public:
     bool                    destroy(void);
     int                     getCameraId(void);
 
+    int                     getPreviewWidth(void);
+    int                     getPreviewHeight(void);
+    int                     getPreviewColorFormat(void);
+    int                     getPreviewNumBuffers(void);
+
+    bool                    setPreviewBuffer(ExynosBuffer *buf);
+    bool                    getPreviewBuffer(ExynosBuffer *buf);
+    bool                    putPreviewBuffer(ExynosBuffer *buf);
+
 private:
-    int                     initializeIspChain(void);
+    bool                    initializeIspChain(void);
 
     int                     m_cameraId;
-    camera_hw_info_t        m_cameraHwInfo;
-    ExynosCameraInfo        *m_cameraInfo;
+    ExynosCameraInfo       *m_cameraInfo;
+    camera_hw_info_t        m_streamInfo;
+
     ion_client              m_ionClient;
 };
 

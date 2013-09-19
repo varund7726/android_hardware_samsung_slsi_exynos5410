@@ -59,7 +59,7 @@ static int HAL_camera_device_set_preview_window(struct camera_device *dev,
                                                 struct preview_stream_ops *ops)
 {
     ALOGV("DEBUG(%s):", __func__);
-    obj(dev)->setPreviewWindow(ops);
+    return obj(dev)->setPreviewWindow(ops);
 }
 
 /** Set the notification and data callbacks */
@@ -129,7 +129,7 @@ static int HAL_camera_device_start_preview(struct camera_device *dev)
 static void HAL_camera_device_stop_preview(struct camera_device *dev)
 {
     ALOGV("DEBUG(%s):", __func__);
-    return obj(dev)->stopPreview();
+    obj(dev)->stopPreview();
 }
 
 /**
@@ -233,6 +233,7 @@ static void HAL_camera_device_release_recording_frame(struct camera_device *dev,
 static int HAL_camera_device_auto_focus(struct camera_device *dev)
 {
     ALOGV("DEBUG(%s):", __func__);
+    return 0;
 }
 
 /**
@@ -420,6 +421,7 @@ extern "C" {
         },
         get_number_of_cameras: HAL_getNumberOfCameras,
         get_camera_info: HAL_getCameraInfo,
+        set_callbacks: NULL
     };
 }
 

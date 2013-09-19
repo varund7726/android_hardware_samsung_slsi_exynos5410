@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
+#include <fcntl.h>
+
+#include <sys/mman.h>
 #include <sys/types.h>
 
 #include <utils/Log.h>
+
+#include "ion.h"
 
 #include "ExynosCamera.h"
 
@@ -24,6 +29,46 @@
 #define LOG_TAG "ExynosCamera"
 
 namespace android {
+
+int cam_int_get_pixel_depth(uint32_t fmt)
+{
+    int depth = 0;
+
+    switch (fmt) {
+    case V4L2_PIX_FMT_JPEG:
+        depth = 8;
+        break;
+    case V4L2_PIX_FMT_NV12:
+    case V4L2_PIX_FMT_NV21:
+    case V4L2_PIX_FMT_YUV420:
+    case V4L2_PIX_FMT_YVU420M:
+    case V4L2_PIX_FMT_NV12M:
+    case V4L2_PIX_FMT_NV12MT:
+        depth = 12;
+        break;
+    case V4L2_PIX_FMT_RGB565:
+    case V4L2_PIX_FMT_YUYV:
+    case V4L2_PIX_FMT_YVYU:
+    case V4L2_PIX_FMT_UYVY:
+    case V4L2_PIX_FMT_VYUY:
+    case V4L2_PIX_FMT_NV16:
+    case V4L2_PIX_FMT_NV61:
+    case V4L2_PIX_FMT_YUV422P:
+    case V4L2_PIX_FMT_SBGGR10:
+    case V4L2_PIX_FMT_SBGGR12:
+    case V4L2_PIX_FMT_SBGGR16:
+        depth = 16;
+        break;
+    case V4L2_PIX_FMT_RGB32:
+        depth = 32;
+        break;
+    default:
+        ALOGE("Get depth failed(format : %d)", fmt);
+        break;
+    }
+
+    return depth;
+}
 
 int cam_int_s_fmt(node_info_t *node)
 {
@@ -34,7 +79,8 @@ int cam_int_s_fmt(node_info_t *node)
     memset(&v4l2_fmt, 0, sizeof(struct v4l2_format));
 
     v4l2_fmt.type = node->type;
-    framesize = (node->width * node->height * get_pixel_depth(node->format)) / 8;
+    framesize = (node->width * node->height *
+            cam_int_get_pixel_depth(node->format)) / 8;
 
     if (node->planes >= 1) {
         v4l2_fmt.fmt.pix_mp.width       = node->width;
@@ -86,8 +132,8 @@ int cam_int_qbuf(node_info_t *node, int index)
     v4l2_buf.length     = node->planes;
 
     for(i = 0; i < node->planes; i++){
-        v4l2_buf.m.planes[i].m.fd = (int)(node->buffer[index].fd.extFd[i]);
-        v4l2_buf.m.planes[i].length  = (unsigned long)(node->buffer[index].size.extS[i]);
+        v4l2_buf.m.planes[i].m.fd = (int)(node->buffer[index].buf.fd.extFd[i]);
+        v4l2_buf.m.planes[i].length  = (unsigned long)(node->buffer[index].buf.size.extS[i]);
     }
 
     ret = exynos_v4l2_qbuf(node->fd, &v4l2_buf);
@@ -103,7 +149,6 @@ int cam_int_streamon(node_info_t *node)
     enum v4l2_buf_type type = node->type;
     int ret;
 
-
     ret = exynos_v4l2_streamon(node->fd, type);
 
     if (ret < 0)
@@ -118,7 +163,6 @@ int cam_int_streamoff(node_info_t *node)
 {
     enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
     int ret;
-
 
     ALOGV("Off streaming I/O... fd(%d)", node->fd);
     ret = exynos_v4l2_streamoff(node->fd, type);
@@ -248,8 +292,8 @@ int cam_int_alloc_memory(ion_client client, ExynosBuffer *buf,
     int ret = 0;
     int flag = 0;
 
-    if (ionClient == 0) {
-        ALOGE("[%s] ionClient is zero (%d)\n", __FUNCTION__, ionClient);
+    if (client == 0) {
+        ALOGE("[%s] ionClient is zero (%d)\n", __FUNCTION__, client);
         return -1;
     }
 
@@ -261,12 +305,13 @@ int cam_int_alloc_memory(ion_client client, ExynosBuffer *buf,
             flag = ION_FLAG_CACHED | ION_FLAG_CACHED_NEEDS_SYNC;
         else
             flag = 0;
-        buf->fd.extFd[i] = ion_alloc(ionClient, buf->size.extS[i], 0,
+        buf->fd.extFd[i] = ion_alloc(client, buf->size.extS[i], 0,
                 ION_HEAP_SYSTEM_MASK, flag);
         if ((buf->fd.extFd[i] == -1) ||(buf->fd.extFd[i] == 0)) {
-            ALOGE("[%s]ion_alloc(%d) failed\n", __FUNCTION__, buf->size.extS[i]);
+            ALOGE("[%s]ion_alloc(%d) failed\n",
+                    __FUNCTION__, buf->size.extS[i]);
             buf->fd.extFd[i] = -1;
-            freeCameraMemory(buf, memory_num);
+            cam_int_free_memory(buf, memory_num);
             return -1;
         }
 
@@ -274,9 +319,10 @@ int cam_int_alloc_memory(ion_client client, ExynosBuffer *buf,
                 buf->size.extS[i], 0);
         if ((buf->virt.extP[i] == (char *) MAP_FAILED) ||
                 (buf->virt.extP[i] == NULL)) {
-            ALOGE("[%s]src ion map failed(%d)\n", __FUNCTION__, buf->size.extS[i]);
+            ALOGE("[%s]src ion map failed(%d)\n",
+                    __FUNCTION__, buf->size.extS[i]);
             buf->virt.extP[i] = (char *) MAP_FAILED;
-            freeCameraMemory(buf, memory_num);
+            cam_int_free_memory(buf, memory_num);
             return -1;
         }
         ALOGV("%s: [%d][0x%08x] size(%d) flag(%d)", __FUNCTION__, i,
@@ -290,16 +336,17 @@ int cam_int_init_sensor(node_info_t *sensor, ion_client client)
 {
     int res = 0;
     for (int i = 0; i < sensor->buffers; i++) {
-        cam_int_init_memory(&sensor->buffer[i], sensor->planes);
-        sensor->buffer[i].size.extS[0] = sensor->width * sensor->height * 2;
-        sensor->buffer[i].size.extS[1] = 8 * 1024;
-        res = cam_int_alloc_memory(client, &sensor->buffer[i], sensor->planes, 1 << 1);
+        cam_int_init_memory(&sensor->buffer[i].buf, sensor->planes);
+        sensor->buffer[i].buf.size.extS[0] = sensor->width * sensor->height * 2;
+        sensor->buffer[i].buf.size.extS[1] = 8 * 1024;
+        res = cam_int_alloc_memory(client, &sensor->buffer[i].buf,
+                sensor->planes, 1 << 1);
         if (res) {
             ALOGE("ERROR(%s): cam_int_alloc_memory failed for sensor buffer %d",
                     __FUNCTION__, i);
             // Free already allocated sensor buffers
             for (int j = 0; j < i; j++) {
-                cam_int_free_memory(&sensor->buffer[i], sensor->planes);
+                cam_int_free_memory(&sensor->buffer[i].buf, sensor->planes);
             }
             break;
         }
@@ -319,13 +366,13 @@ void cam_int_init_isp(node_info_t *isp, node_info_t *sensor)
     isp->memory = V4L2_MEMORY_DMABUF;
 
     for (int i = 0; i < isp->buffers; i++) {
-        cam_int_init_memory(&isp->buffer[i], isp->planes);
-        isp->buffer[i].size.extS[0] = sensor->buffer[i].size.extS[0];
-        isp->buffer[i].size.extS[1] = sensor->buffer[i].size.extS[1];
-        isp->buffer[i].fd.extFd[0] = sensor->buffer[i].fd.extFd[0];
-        isp->buffer[i].fd.extFd[1] = sensor->buffer[i].fd.extFd[1];
-        isp->buffer[i].virt.extP[0] = sensor->buffer[i].virt.extP[0];
-        isp->buffer[i].virt.extP[1] = sensor->buffer[i].virt.extP[1];
+        cam_int_init_memory(&isp->buffer[i].buf, isp->planes);
+        isp->buffer[i].buf.size.extS[0] = sensor->buffer[i].buf.size.extS[0];
+        isp->buffer[i].buf.size.extS[1] = sensor->buffer[i].buf.size.extS[1];
+        isp->buffer[i].buf.fd.extFd[0] = sensor->buffer[i].buf.fd.extFd[0];
+        isp->buffer[i].buf.fd.extFd[1] = sensor->buffer[i].buf.fd.extFd[1];
+        isp->buffer[i].buf.virt.extP[0] = sensor->buffer[i].buf.virt.extP[0];
+        isp->buffer[i].buf.virt.extP[1] = sensor->buffer[i].buf.virt.extP[1];
     }
 }
 
@@ -333,19 +380,19 @@ int cam_int_start_node(node_info_t *node, int sensor_id)
 {
     int ret = 0;
 
-    ret = cam_int_s_input(&node, sensor_id);
+    ret = cam_int_s_input(node, sensor_id);
     if (ret < 0) {
         ALOGE("ERR(%s): cam_int_s_input(%d) failed!!!! err = %d",
                 __FUNCTION__, sensor_id, ret);
         return ret;
     }
-    ret = cam_int_s_fmt(&node);
+    ret = cam_int_s_fmt(node);
     if (ret < 0) {
         ALOGE("ERR(%s): cam_int_s_fmt(%d) failed!!!! err = %d",
                 __FUNCTION__, sensor_id, ret);
         return ret;
     }
-    cam_int_reqbufs(&node);
+    cam_int_reqbufs(node);
 
     return 0;
 }
@@ -355,7 +402,7 @@ ExynosCamera::ExynosCamera()
         m_cameraId(CAMERA_ID_BACK),
         m_ionClient(0)
 {
-    memset(&m_cameraHwInfo, 0, sizeof(struct camera_hw_info_t));
+    memset(&m_streamInfo, 0, sizeof(camera_hw_info_t));
 
     m_ionClient = ion_client_create();
     if (m_ionClient < 0) {
@@ -387,35 +434,145 @@ int ExynosCamera::getCameraId()
     return m_cameraId;
 }
 
-bool ExynosCamera::initializeIspChain()
+int ExynosCamera::getPreviewWidth()
+{
+    return m_cameraInfo->previewW;
+}
+
+int ExynosCamera::getPreviewHeight()
+{
+    return m_cameraInfo->previewH;
+}
+
+int ExynosCamera::getPreviewColorFormat()
+{
+    return m_cameraInfo->previewColorFormat;
+}
+
+int ExynosCamera::getPreviewNumBuffers()
+{
+    return m_streamInfo.scp.buffers;
+}
+
+bool ExynosCamera::setPreviewBuffer(ExynosBuffer *buf)
+{
+    node_info_t *previewStream = &m_streamInfo.scp;
+    int idx = buf->reserved.p;
+
+    if (previewStream->buffers <= idx) {
+        ALOGE("ERR(%s): index out of range (%d/%d)",
+                __FUNCTION__, idx, previewStream->buffers);
+        return false;
+    }
+
+    previewStream->buffer[idx].buf = *buf;
+
+    return true;
+}
+
+bool ExynosCamera::getPreviewBuffer(ExynosBuffer *buf)
+{
+    node_info_t *previewStream = &m_streamInfo.scp;
+    struct v4l2_buffer v4l2_buf;
+    struct v4l2_plane planes[previewStream->planes];
+    int ret;
+
+    v4l2_buf.m.planes = planes;
+    v4l2_buf.type = previewStream->type;
+    v4l2_buf.memory = previewStream->memory;
+    v4l2_buf.length = 0;
+
+    for (int i = 0; i < 3; i++) {
+        if (previewStream->buffer[0].buf.size.extS[i] != 0) {
+            v4l2_buf.length++;
+        }
+    }
+
+    ret = exynos_v4l2_dqbuf(previewStream->fd, &v4l2_buf);
+    if (ret != 0) {
+        ALOGE("ERR(%s): exynos_v4l2_dqbuf failed, err = %d",
+                __FUNCTION__, ret);
+        return false;
+    }
+
+    if (previewStream->buffers <= v4l2_buf.index) {
+        ALOGE("ERR(%s): index out of range (%d/%d)",
+                __FUNCTION__, v4l2_buf.index, previewStream->buffers);
+        return false;
+    }
+
+    *buf = previewStream->buffer[v4l2_buf.index].buf;
+
+    return true;
+}
+
+bool ExynosCamera::putPreviewBuffer(ExynosBuffer *buf)
+{
+    node_info_t *previewStream = &m_streamInfo.scp;
+    struct v4l2_buffer v4l2_buf;
+    struct v4l2_plane planes[previewStream->planes];
+    int idx = buf->reserved.p;
+    int ret;
+
+    if (!previewStream->buffer[idx].valid) {
+        ALOGE("ERR(%s): invalid buffer index %d",
+                __FUNCTION__, idx);
+    }
+
+    v4l2_buf.m.planes = planes;
+    v4l2_buf.type = previewStream->type;
+    v4l2_buf.memory = previewStream->memory;
+    v4l2_buf.index = idx;
+    v4l2_buf.length = 0;
+
+    for (int i = 0; i < 3; i++) {
+        v4l2_buf.m.planes[i].m.fd = previewStream->buffer[idx].buf.fd.extFd[i];
+        v4l2_buf.m.planes[i].length = previewStream->buffer[idx].buf.size.extS[i];
+
+        if (previewStream->buffer[idx].buf.size.extS[i] != 0) {
+            v4l2_buf.length++;
+        }
+    }
+
+    ret = exynos_v4l2_qbuf(previewStream->fd, &v4l2_buf);
+    if (ret != 0) {
+        ALOGE("ERR(%s): exynos_v4l2_qbuf failed, err = %d",
+                __FUNCTION__, ret);
+        return false;
+    }
+
+    return true;
+}
+
+bool ExynosCamera::initializeIspChain(void)
 {
     int ret;
 
     if (m_cameraId == 0) {
-        m_cameraHwInfo.sensor_id = SENSOR_NAME_IMX135;
+        m_streamInfo.sensor_id = SENSOR_NAME_IMX135;
         m_cameraInfo = new ExynosCameraInfoIMX135;
     } else {
-        m_cameraHwInfo.sensor_id = SENSOR_NAME_S5K6B2;
+        m_streamInfo.sensor_id = SENSOR_NAME_S5K6B2;
         m_cameraInfo = new ExynosCameraInfoS5K6B2;
     }
 
-    ret = cam_int_open_node(&m_cameraHwInfo.sensor0, VIDEO_NODE_SENSOR0);
-    ret = cam_int_open_node(&m_cameraHwInfo.is3a1, VIDEO_NODE_IS3A1);
-    ret = cam_int_open_node(&m_cameraHwInfo.isp, VIDEO_NODE_ISP);
-    ret = cam_int_open_node(&m_cameraHwInfo.scalerc, VIDEO_NODE_SCALERC);
-    ret = cam_int_open_node(&m_cameraHwInfo.scalerp, VIDEO_NODE_SCALERP);
+    ret = cam_int_open_node(&m_streamInfo.sensor0, VIDEO_NODE_SENSOR0);
+    ret = cam_int_open_node(&m_streamInfo.is3a1, VIDEO_NODE_IS3A1);
+    ret = cam_int_open_node(&m_streamInfo.isp, VIDEO_NODE_ISP);
+    ret = cam_int_open_node(&m_streamInfo.scc, VIDEO_NODE_SCALERC);
+    ret = cam_int_open_node(&m_streamInfo.scp, VIDEO_NODE_SCALERP);
 
     /* initialize sensor0 */
-    m_cameraHwInfo.sensor0.width = m_cameraInfo->pictureW;
-    m_cameraHwInfo.sensor0.height = m_cameraInfo->pictureH;
-    m_cameraHwInfo.sensor0.format = V4L2_PIX_FMT_SBGGR16;
-    m_cameraHwInfo.sensor0.planes = 2;
-    m_cameraHwInfo.sensor0.buffers = NUM_SENSOR_BUFFERS;
-    m_cameraHwInfo.sensor0.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-    m_cameraHwInfo.sensor0.memory = V4L2_MEMORY_DMABUF;
-    m_cameraHwInfo.sensor0.status = false;
+    m_streamInfo.sensor0.width = m_cameraInfo->pictureW;
+    m_streamInfo.sensor0.height = m_cameraInfo->pictureH;
+    m_streamInfo.sensor0.format = V4L2_PIX_FMT_SBGGR16;
+    m_streamInfo.sensor0.planes = 2;
+    m_streamInfo.sensor0.buffers = NUM_SENSOR_BUFFERS;
+    m_streamInfo.sensor0.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+    m_streamInfo.sensor0.memory = V4L2_MEMORY_DMABUF;
+    m_streamInfo.sensor0.status = false;
 
-    ret = cam_int_init_sensor(&m_cameraHwInfo.sensor0, m_ionClient);
+    ret = cam_int_init_sensor(&m_streamInfo.sensor0, m_ionClient);
     if (ret < 0) {
         ALOGE("ERR(%s): cam_int_sensor failed!!!!", __FUNCTION__);
         goto init_isp_chain_err;
@@ -424,27 +581,26 @@ bool ExynosCamera::initializeIspChain()
     // TODO: initialize IS3A1 ?
 
     /* initialize ISP with sensor0 */
-    ret = cam_int_init_isp(&m_cameraHwInfo.isp,
-            &m_cameraHwInfo.sensor0);
+    cam_int_init_isp(&m_streamInfo.isp, &m_streamInfo.sensor0);
 
     /* initialize ScalerC */
-    m_cameraHwInfo.scc.width = m_cameraInfo->videoW;
-    m_cameraHwInfo.scc.height = m_cameraInfo->videoH;
-    m_cameraHwInfo.scc.format = V4L2_PIX_FMT_YUYV;
-    m_cameraHwInfo.scc.planes = 2;
-    m_cameraHwInfo.scc.buffers = NUM_SCC_BUFFERS;
-    m_cameraHwInfo.scc.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-    m_cameraHwInfo.scc.memory = V4L2_MEMORY_DMABUF;
-    m_cameraHwInfo.scc.status = false;
+    m_streamInfo.scc.width = m_cameraInfo->videoW;
+    m_streamInfo.scc.height = m_cameraInfo->videoH;
+    m_streamInfo.scc.format = V4L2_PIX_FMT_YUYV;
+    m_streamInfo.scc.planes = 2;
+    m_streamInfo.scc.buffers = NUM_SCC_BUFFERS;
+    m_streamInfo.scc.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+    m_streamInfo.scc.memory = V4L2_MEMORY_DMABUF;
+    m_streamInfo.scc.status = false;
 
     return true;
 
 init_isp_chain_err:
-    close(&m_cameraHwInfo.sensor0.fd);
-    close(&m_cameraHwInfo.is3a1.fd);
-    close(&m_cameraHwInfo.isp.fd);
-    close(&m_cameraHwInfo.scalerc.fd);
-    close(&m_cameraHwInfo.scalerp.fd);
+    close(m_streamInfo.sensor0.fd);
+    close(m_streamInfo.is3a1.fd);
+    close(m_streamInfo.isp.fd);
+    close(m_streamInfo.scc.fd);
+    close(m_streamInfo.scp.fd);
 
     return false;
 }

@@ -23,6 +23,8 @@
 
 #include <sys/types.h>
 
+#include <hardware/camera.h>
+
 namespace android {
 
 //! Camera ID
@@ -71,6 +73,7 @@ enum {
     FOCUS_MODE_CONTINUOUS_VIDEO   = (1 << 5), //!< \n
     FOCUS_MODE_CONTINUOUS_PICTURE = (1 << 6), //!< \n
     FOCUS_MODE_TOUCH              = (1 << 7), //!< \n
+    FOCUS_MODE_CONTINUOUS_PICTURE_MACRO = (1 << 8), //!< \n
 };
 
 //! Scene mode
@@ -104,13 +107,40 @@ enum {
     WHITE_BALANCE_SHADE            = (1 << 7), //!< \n
 };
 
-//! Jpeg Qualtiy
+//! Jpeg Quality
 enum JPEG_QUALITY {
     JPEG_QUALITY_MIN        = 0,    //!<
     JPEG_QUALITY_ECONOMY    = 70,   //!<
     JPEG_QUALITY_NORMAL     = 80,   //!<
     JPEG_QUALITY_SUPERFINE  = 90,   //!<
     JPEG_QUALITY_MAX        = 100,  //!<
+};
+
+//! Metering
+enum {
+    METERING_MODE_AVERAGE = (1 << 0), //!< \n
+    METERING_MODE_CENTER  = (1 << 1), //!< \n
+    METERING_MODE_MATRIX  = (1 << 2), //!< \n
+    METERING_MODE_SPOT    = (1 << 3), //!< \n
+};
+
+//! Contrast
+enum {
+    CONTRAST_AUTO    = (1 << 0), //!< \n
+    CONTRAST_MINUS_2 = (1 << 1), //!< \n
+    CONTRAST_MINUS_1 = (1 << 2), //!< \n
+    CONTRAST_DEFAULT = (1 << 3), //!< \n
+    CONTRAST_PLUS_1  = (1 << 4), //!< \n
+    CONTRAST_PLUS_2  = (1 << 5), //!< \n
+};
+
+//! Camera Shot mode
+enum SHOT_MODE {
+    SHOT_MODE_SINGLE        = 0, //!<
+    SHOT_MODE_CONTINUOUS    = 1, //!<
+    SHOT_MODE_PANORAMA      = 2, //!<
+    SHOT_MODE_SMILE         = 3, //!<
+    SHOT_MODE_SELF          = 6, //!<
 };
 
 struct ExynosCameraInfo
@@ -210,12 +240,14 @@ struct ExynosCameraInfoIMX135 : public ExynosCameraInfo
 {
 public:
     ExynosCameraInfoIMX135();
-}
+};
 
 struct ExynosCameraInfoS5K6B2 : public ExynosCameraInfo
 {
 public:
     ExynosCameraInfoS5K6B2();
-}
+};
 
 }; // namespace android
+
+#endif /* _EXYNOS_CAMERA_INFO_H_ */
