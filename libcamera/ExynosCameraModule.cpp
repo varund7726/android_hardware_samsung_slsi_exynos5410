@@ -23,6 +23,7 @@
 #include <sys/types.h>
 #include <utils/Log.h>
 
+#include <camera/CameraParameters.h>
 #include <hardware/hardware.h>
 #include <hardware/camera.h>
 
@@ -274,22 +275,29 @@ static int HAL_camera_device_cancel_picture(struct camera_device *dev)
  * invalid or not supported.
  */
 static int HAL_camera_device_set_parameters(struct camera_device *dev,
-                                            const char *parms)
+                                            const char *params)
 {
     ALOGV("DEBUG(%s):", __func__);
-    return 0;
+    String8 str(params);
+    CameraParameters p(str);
+    return obj(dev)->setParameters(p);
 }
 
 /** Return the camera parameters. */
 char *HAL_camera_device_get_parameters(struct camera_device *dev)
 {
     ALOGV("DEBUG(%s):", __func__);
-    return 0;
+    CameraParameters params = obj(dev)->getParameters();
+    String8 str = params.flatten();
+    return strdup(str.string());
 }
 
-static void HAL_camera_device_put_parameters(struct camera_device *dev, char *parms)
+static void HAL_camera_device_put_parameters(struct camera_device *dev, char *params)
 {
     ALOGV("DEBUG(%s):", __func__);
+    if (params) {
+        free(params);
+    }
 }
 
 /**

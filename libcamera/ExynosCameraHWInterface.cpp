@@ -242,6 +242,11 @@ bool ExynosCameraHWInterface::m_previewThreadFunc(void)
     }
 }
 
+void ExynosCameraHWInterface::m_initializeParameters(int cameraId)
+{
+
+}
+
 /* Public functions */
 
 ExynosCameraHWInterface::ExynosCameraHWInterface(int cameraId,
@@ -458,6 +463,43 @@ status_t ExynosCameraHWInterface::startPreview(void)
 void ExynosCameraHWInterface::stopPreview(void)
 {
 
+}
+
+status_t ExynosCameraHWInterface::setParameters(const CameraParameters &params)
+{
+    int newPreviewW;
+    int newPreviewH;
+
+    // Preview
+
+    // Picture
+
+    // Recording
+
+    // Mode switch
+
+    // Focus
+
+    // Flash
+
+    // Exposure
+
+    // Antibanding
+
+    // White balance
+
+    // Scene mode
+
+    // Effect
+
+    // ISO
+
+    return OK;
+}
+
+CameraParameters ExynosCameraHWInterface::getParameters(void) const
+{
+    return m_params;
 }
 
 int ExynosCameraHWInterface::getCameraId(void)

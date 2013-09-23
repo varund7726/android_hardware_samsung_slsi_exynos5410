@@ -20,6 +20,7 @@
 #include <utils/threads.h>
 #include <utils/RefBase.h>
 
+#include <camera/CameraParameters.h>
 #include <hardware/camera.h>
 #include <hardware/gralloc.h>
 
@@ -58,6 +59,9 @@ public:
     virtual status_t        startPreview(void);
     virtual void            stopPreview(void);
 
+    virtual status_t        setParameters(const CameraParameters &params);
+    virtual CameraParameters getParameters(void) const;
+
     int                     getCameraId(void);
 
 private:
@@ -88,6 +92,7 @@ private:
     bool                    m_previewThreadFunc(void);
     bool                    m_previewThreadProcessBuffers(void);
     bool                    m_previewThreadProcessCallbacks(void);
+    void                    m_initializeParameters(int cameraId);
 
     /* Internal variables */
     int                     m_cameraId;
@@ -102,6 +107,8 @@ private:
 
     bool                    m_previewRunning;
     bool                    m_previewExit;
+
+    CameraParameters        m_params;
 
     camera_notify_callback  m_notifyCb;
     camera_data_callback    m_dataCb;
