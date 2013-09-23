@@ -220,12 +220,12 @@ bool ExynosCameraHWInterface::m_previewThreadProcessBuffers(void)
     return true;
 }
 
-bool ExynosCameraHWInterface::m_previewThreadProcessCallbacks()
+bool ExynosCameraHWInterface::m_previewThreadProcessCallbacks(void)
 {
     return false;
 }
 
-bool ExynosCameraHWInterface::m_previewThreadFunc()
+bool ExynosCameraHWInterface::m_previewThreadFunc(void)
 {
     ALOGV("DEBUG(%s): starting", __FUNCTION__);
 
@@ -352,7 +352,7 @@ bool ExynosCameraHWInterface::msgTypeEnabled(int32_t msgType)
     return ((m_msgEnabled & msgType) > 0);
 }
 
-status_t ExynosCameraHWInterface::startPreview()
+status_t ExynosCameraHWInterface::startPreview(void)
 {
     ExynosBuffer buf;
     void *vaddr[3];
@@ -455,12 +455,12 @@ status_t ExynosCameraHWInterface::startPreview()
     return OK;
 }
 
-void ExynosCameraHWInterface::stopPreview()
+void ExynosCameraHWInterface::stopPreview(void)
 {
 
 }
 
-int ExynosCameraHWInterface::getCameraId()
+int ExynosCameraHWInterface::getCameraId(void)
 {
     return m_cameraId;
 }

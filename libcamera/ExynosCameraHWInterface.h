@@ -55,11 +55,10 @@ public:
     virtual void            disableMsgType(int32_t msgType);
     virtual bool            msgTypeEnabled(int32_t msgType);
 
-    virtual status_t        startPreview();
-    virtual void            stopPreview();
+    virtual status_t        startPreview(void);
+    virtual void            stopPreview(void);
 
-    int                     getCameraId();
-
+    int                     getCameraId(void);
 
 private:
     /* Internal classes */
