@@ -434,17 +434,32 @@ int ExynosCamera::getCameraId()
     return m_cameraId;
 }
 
-int ExynosCamera::getPreviewWidth()
+int ExynosCamera::getPreviewWidth(void)
+{
+    return m_previewWidth;
+}
+
+int ExynosCamera::getPreviewHeight(void)
+{
+    return m_previewHeight;
+}
+
+int ExynosCamera::getPreviewColorFormat(void)
+{
+    return m_previewColorFormat;
+}
+
+int ExynosCamera::getHardwarePreviewWidth()
 {
     return m_cameraInfo->previewW;
 }
 
-int ExynosCamera::getPreviewHeight()
+int ExynosCamera::getHardwarePreviewHeight()
 {
     return m_cameraInfo->previewH;
 }
 
-int ExynosCamera::getPreviewColorFormat()
+int ExynosCamera::getHardwarePreviewColorFormat()
 {
     return m_cameraInfo->previewColorFormat;
 }
