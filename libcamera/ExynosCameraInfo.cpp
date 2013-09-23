@@ -131,10 +131,6 @@ ExynosCameraInfo::ExynosCameraInfo()
     maxZoom = ZOOM_LEVEL_MAX;
     hwZoomSupported = false;
     zoom = 0;
-    gpsAltitude = 0;
-    gpsLatitude = 0;
-    gpsLongitude = 0;
-    gpsTimestamp = 0;
 
     // Additional API default Value.
     angle = 0;
@@ -143,7 +139,6 @@ ExynosCameraInfo::ExynosCameraInfo()
     brightness = 0;
     contrast = CONTRAST_DEFAULT;
     gamma = false;
-    hue = 2; // 2 is default;
     iso = 0;
     metering = METERING_MODE_CENTER;
     objectTracking = false;

@@ -204,11 +204,6 @@ public:
     bool hwZoomSupported;
     int  zoom;
 
-    long gpsLatitude;
-    long gpsLongitude;
-    long gpsAltitude;
-    long gpsTimestamp;
-
     // Additional API.
     int  angle;
     bool antiShake;
@@ -217,7 +212,6 @@ public:
     int  contrast;
     bool gamma;
     bool odc;
-    int  hue;
     int  iso;
     int  metering;
     bool objectTracking;
