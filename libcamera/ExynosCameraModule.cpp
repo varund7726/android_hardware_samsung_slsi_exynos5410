@@ -86,6 +86,7 @@ static void HAL_camera_device_set_callbacks(struct camera_device *dev,
 static void HAL_camera_device_enable_msg_type(struct camera_device *dev, int32_t msg_type)
 {
     ALOGV("DEBUG(%s):", __func__);
+    obj(dev)->enableMsgType(msg_type);
 }
 
 /**
@@ -101,6 +102,7 @@ static void HAL_camera_device_enable_msg_type(struct camera_device *dev, int32_t
 static void HAL_camera_device_disable_msg_type(struct camera_device *dev, int32_t msg_type)
 {
     ALOGV("DEBUG(%s):", __func__);
+    obj(dev)->disableMsgType(msg_type);
 }
 
 /**
@@ -111,7 +113,7 @@ static void HAL_camera_device_disable_msg_type(struct camera_device *dev, int32_
 static int HAL_camera_device_msg_type_enabled(struct camera_device *dev, int32_t msg_type)
 {
     ALOGV("DEBUG(%s):", __func__);
-    return 0;
+    return obj(dev)->msgTypeEnabled(msg_type);
 }
 
 /**

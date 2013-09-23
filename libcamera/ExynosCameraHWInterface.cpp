@@ -337,6 +337,21 @@ void ExynosCameraHWInterface::setCallbacks(camera_notify_callback notify_cb,
     m_callbackCookie = user;
 }
 
+void ExynosCameraHWInterface::enableMsgType(int32_t msgType)
+{
+    m_msgEnabled |= msgType;
+}
+
+void ExynosCameraHWInterface::disableMsgType(int32_t msgType)
+{
+    m_msgEnabled &= (~msgType);
+}
+
+bool ExynosCameraHWInterface::msgTypeEnabled(int32_t msgType)
+{
+    return ((m_msgEnabled & msgType) > 0);
+}
+
 status_t ExynosCameraHWInterface::startPreview()
 {
     ExynosBuffer buf;

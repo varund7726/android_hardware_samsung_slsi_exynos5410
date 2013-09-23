@@ -44,11 +44,17 @@ public:
     virtual                 ~ExynosCameraHWInterface();
 
     virtual status_t        setPreviewWindow(preview_stream_ops *ops);
+
     virtual void            setCallbacks(camera_notify_callback notify_cb,
                                     camera_data_callback data_cb,
                                     camera_data_timestamp_callback data_cb_timestamp,
                                     camera_request_memory get_memory,
                                     void *user);
+
+    virtual void            enableMsgType(int32_t msgType);
+    virtual void            disableMsgType(int32_t msgType);
+    virtual bool            msgTypeEnabled(int32_t msgType);
+
     virtual status_t        startPreview();
     virtual void            stopPreview();
 
@@ -90,6 +96,8 @@ private:
 
     preview_stream_ops     *m_previewWindow;
     int                     m_minUndequeuedBufs;
+
+    int32_t                 m_msgEnabled;
 
     buffer_params_t         m_previewBuffers[NUM_MAX_CAMERA_BUFFERS];
 
