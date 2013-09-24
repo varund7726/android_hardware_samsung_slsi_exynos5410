@@ -1237,6 +1237,8 @@ void ExynosCameraInfo::fromParameters(const CameraParameters *p)
 
 ExynosCameraInfoIMX135::ExynosCameraInfoIMX135()
 {
+    ALOGD("DEBUG(%s): Initializing", __FUNCTION__);
+
     cameraInfo.facing = CAMERA_FACING_BACK;
     cameraInfo.orientation = 0;
 
@@ -1417,6 +1419,7 @@ ExynosCameraInfoIMX135::ExynosCameraInfoIMX135()
 
 ExynosCameraInfoS5K6B2::ExynosCameraInfoS5K6B2()
 {
+    ALOGD("DEBUG(%s): Initializing", __FUNCTION__);
 }
 
 }; // namespace android

@@ -478,11 +478,17 @@ status_t ExynosCameraHWInterface::setParameters(const CameraParameters &params)
     // update parameter list
     m_camera->getParameters(&m_params);
 
+    ALOGD("DEBUG(%s): dumping updated parameters", __FUNCTION__);
+    m_params.dump();
+
     return OK;
 }
 
 CameraParameters ExynosCameraHWInterface::getParameters(void) const
 {
+    ALOGD("DEBUG(%s): dumping parameters", __FUNCTION__);
+    m_params.dump();
+
     return m_params;
 }
 
