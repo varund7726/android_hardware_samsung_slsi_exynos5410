@@ -559,6 +559,16 @@ bool ExynosCamera::putPreviewBuffer(ExynosBuffer *buf)
     return true;
 }
 
+void ExynosCamera::setParameters(const CameraParameters *p)
+{
+    m_cameraInfo->fromParameters(p);
+}
+
+void ExynosCamera::getParameters(CameraParameters *p)
+{
+    m_cameraInfo->toParameters(p);
+}
+
 bool ExynosCamera::initializeIspChain(void)
 {
     int ret;

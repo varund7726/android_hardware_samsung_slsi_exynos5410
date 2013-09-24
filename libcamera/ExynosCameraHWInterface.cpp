@@ -242,11 +242,6 @@ bool ExynosCameraHWInterface::m_previewThreadFunc(void)
     }
 }
 
-void ExynosCameraHWInterface::m_initializeParameters(int cameraId)
-{
-
-}
-
 /* Public functions */
 
 ExynosCameraHWInterface::ExynosCameraHWInterface(int cameraId,
@@ -467,32 +462,11 @@ void ExynosCameraHWInterface::stopPreview(void)
 
 status_t ExynosCameraHWInterface::setParameters(const CameraParameters &params)
 {
-    int newPreviewW;
-    int newPreviewH;
+    // update internal parameter representation
+    m_camera->setParameters(&params);
 
-    // Preview
-
-    // Picture
-
-    // Recording
-
-    // Mode switch
-
-    // Focus
-
-    // Flash
-
-    // Exposure
-
-    // Antibanding
-
-    // White balance
-
-    // Scene mode
-
-    // Effect
-
-    // ISO
+    // update parameter list
+    m_camera->getParameters(&m_params);
 
     return OK;
 }

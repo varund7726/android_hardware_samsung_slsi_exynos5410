@@ -92,7 +92,6 @@ private:
     bool                    m_previewThreadFunc(void);
     bool                    m_previewThreadProcessBuffers(void);
     bool                    m_previewThreadProcessCallbacks(void);
-    void                    m_initializeParameters(int cameraId);
 
     /* Internal variables */
     int                     m_cameraId;

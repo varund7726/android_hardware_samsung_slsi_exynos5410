@@ -116,6 +116,9 @@ public:
     bool                    getPreviewBuffer(ExynosBuffer *buf);
     bool                    putPreviewBuffer(ExynosBuffer *buf);
 
+    void                    setParameters(const CameraParameters *p);
+    void                    getParameters(CameraParameters *p);
+
 private:
     bool                    initializeIspChain(void);
 
