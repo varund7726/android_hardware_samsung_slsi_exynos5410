@@ -23,6 +23,8 @@
 
 #include <sys/types.h>
 
+#include <camera/CameraParameters.h>
+
 #include <hardware/camera.h>
 
 namespace android {
@@ -74,6 +76,13 @@ enum {
     FOCUS_MODE_CONTINUOUS_PICTURE = (1 << 6), //!< \n
     FOCUS_MODE_TOUCH              = (1 << 7), //!< \n
     FOCUS_MODE_CONTINUOUS_PICTURE_MACRO = (1 << 8), //!< \n
+};
+
+//! Focus distance
+enum {
+    FOCUS_DISTANCE_10           = (1 << 0), //!< \n
+    FOCUS_DISTANCE_120          = (1 << 1), //!< \n
+    FOCUS_DISTANCE_INF          = (1 << 2), //!< \n
 };
 
 //! Scene mode
@@ -143,100 +152,149 @@ enum SHOT_MODE {
     SHOT_MODE_SELF          = 6, //!<
 };
 
-struct ExynosCameraInfo
+//! ISO modes
+enum ISO {
+    ISO_AUTO        = (1 << 0), //!< \n
+    ISO_100         = (1 << 1), //!< \n
+    ISO_200         = (1 << 2), //!< \n
+    ISO_400         = (1 << 3), //!< \n
+    ISO_800         = (1 << 4), //!< \n
+    ISO_1600        = (1 << 5), //!< \n
+};
+
+typedef struct resolution {
+    int width;
+    int height;
+} resolution_t;
+
+typedef struct fps_range {
+    int min;
+    int max;
+} fps_range_t;
+
+class ExynosCameraInfo
 {
 public:
-    // HAL camera info
     camera_info_t cameraInfo;
 
-    // Google Official API : Camera.Parameters
-    // http://developer.android.com/reference/android/hardware/Camera.Parameters.html
-    int  previewW;
-    int  previewH;
-    int  previewColorFormat;
-    int  videoW;
-    int  videoH;
-    int  videoColorFormat;
-    int  pictureW;
-    int  pictureH;
-    int  pictureColorFormat;
-    int  thumbnailW;
-    int  thumbnailH;
+    resolution_t       *previewSizeValues;
+    int                 previewSizeCount;
+    resolution_t        previewSize;
+    int                 previewFormatValues;
+    int                 previewFormat;
+    int                *previewFpsValues;
+    int                 previewFpsCount;
+    int                 previewFps;
+    fps_range_t        *previewFpsRangeValues;
+    int                 previewFpsRangeCount;
+    fps_range_t         previewFpsRange;
 
-    int  antiBandingList;
-    int  antiBanding;
+    resolution_t       *pictureSizeValues;
+    int                 pictureSizeCount;
+    resolution_t        pictureSize;
+    int                 pictureFormatValues;
+    int                 pictureFormat;
+    int                 pictureQuality;
+    resolution_t       *thumbnailSizeValues;
+    int                 thumbnailSizeCount;
+    resolution_t        thumbnailSize;
+    int                 thumbnailQuality;
 
-    int  effectList;
-    int  effect;
+    resolution_t       *videoSizeValues;
+    int                 videoSizeCount;
+    resolution_t        videoSize;
+    resolution_t        videoPreferredPreviewSize;
+    int                 videoFormatValues;
+    int                 videoFormat;
+    bool                videoStabilizationSupported;
+    bool                videoStabilization;
+    bool                videoSnapshotSupported;
 
-    int  flashModeList;
-    int  flashMode;
+    int                 focusModeValues;
+    int                 focusMode;
+    int                 focusDistances;
+    int                 focusMaxAreas;
 
-    int  focusModeList;
-    int  focusMode;
+    bool                zoomSupported;
+    bool                zoomSmoothSupported;
+    int                *zoomRatioValues;
+    int                 zoomRatioCount;
+    int                 zoomMax;
+    int                 zoom;
 
-    int  sceneModeList;
-    int  sceneMode;
+    int                 flashModeValues;
+    int                 flashMode;
 
-    int  whiteBalanceList;
-    int  whiteBalance;
-    bool autoWhiteBalanceLockSupported;
-    bool autoWhiteBalanceLock;
+    int                 exposureCompensationMin;
+    int                 exposureCompensationMax;
+    int                 exposureCompensation;
+    float               exposureCompensationStep;
 
-    int  rotation;
-    int  minExposure;
-    int  maxExposure;
-    int  exposure;
+    int                 antiBandingValues;
+    int                 antiBanding;
 
-    bool autoExposureLockSupported;
-    bool autoExposureLock;
+    int                 whiteBalanceValues;
+    int                 whiteBalance;
+    bool                autoWhiteBalanceLockSupported;
+    bool                autoWhiteBalanceLock;
 
-    int  fps;
-    int  focalLengthNum;
-    int  focalLengthDen;
-    bool supportVideoStabilization;
-    bool applyVideoStabilization;
-    bool videoStabilization;
-    int  maxNumMeteringAreas;
-    int  maxNumDetectedFaces;
-    int  maxNumFocusAreas;
-    int  maxZoom;
-    bool hwZoomSupported;
-    int  zoom;
+    int                 sceneModeValues;
+    int                 sceneMode;
 
-    // Additional API.
-    int  angle;
-    bool antiShake;
-    bool beautyShot;
-    int  brightness;
-    int  contrast;
-    bool gamma;
-    bool odc;
-    int  iso;
-    int  metering;
-    bool objectTracking;
-    bool objectTrackingStart;
+    int                 effectValues;
+    int                 effect;
 
-    int  saturation;
-    int  sharpness;
-    int  shotMode;
-    bool slowAE;
-    bool smartAuto;
-    bool touchAfStart;
-    bool wdr;
-    bool tdnr;
+    int                 faceDetectionHwMax;
+    int                 faceDetectionSwMax;
+
+    int                 rotation;
+    float               viewAngleHorizontal;
+    float               viewAngleVertical;
+
+    float               focalLength;
+
+    int                 meteringMaxAreas;
+
+    int                 iso;
+
+    int                 contrast;
+
+    int                 brightnessMax;
+    int                 brightnessMin;
+    int                 brightness;
+
+    int                 hueMax;
+    int                 hueMin;
+    int                 hue;
+
+    int                 saturationMax;
+    int                 saturationMin;
+    int                 saturation;
+
+    int                 sharpnessMax;
+    int                 sharpnessMin;
+    int                 sharpness;
+
+    int                 vtmode;
+    int                 wdr;
 
 public:
     ExynosCameraInfo();
+    virtual ~ExynosCameraInfo();
+
+    virtual void                toParameters(CameraParameters *p);
+    virtual void                fromParameters(const CameraParameters *p);
 };
 
-struct ExynosCameraInfoIMX135 : public ExynosCameraInfo
+class ExynosCameraInfoIMX135 : public ExynosCameraInfo
 {
 public:
     ExynosCameraInfoIMX135();
+
+private:
 };
 
-struct ExynosCameraInfoS5K6B2 : public ExynosCameraInfo
+class ExynosCameraInfoS5K6B2 : public ExynosCameraInfo
 {
 public:
     ExynosCameraInfoS5K6B2();

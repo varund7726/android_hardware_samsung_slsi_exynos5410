@@ -451,17 +451,17 @@ int ExynosCamera::getPreviewColorFormat(void)
 
 int ExynosCamera::getHardwarePreviewWidth()
 {
-    return m_cameraInfo->previewW;
+    return m_cameraInfo->previewSize.width;
 }
 
 int ExynosCamera::getHardwarePreviewHeight()
 {
-    return m_cameraInfo->previewH;
+    return m_cameraInfo->previewSize.height;
 }
 
 int ExynosCamera::getHardwarePreviewColorFormat()
 {
-    return m_cameraInfo->previewColorFormat;
+    return m_cameraInfo->previewFormat;
 }
 
 int ExynosCamera::getPreviewNumBuffers()
@@ -578,8 +578,8 @@ bool ExynosCamera::initializeIspChain(void)
     ret = cam_int_open_node(&m_streamInfo.scp, VIDEO_NODE_SCALERP);
 
     /* initialize sensor0 */
-    m_streamInfo.sensor0.width = m_cameraInfo->pictureW;
-    m_streamInfo.sensor0.height = m_cameraInfo->pictureH;
+    m_streamInfo.sensor0.width = m_cameraInfo->pictureSize.width;
+    m_streamInfo.sensor0.height = m_cameraInfo->pictureSize.height;
     m_streamInfo.sensor0.format = V4L2_PIX_FMT_SBGGR16;
     m_streamInfo.sensor0.planes = 2;
     m_streamInfo.sensor0.buffers = NUM_SENSOR_BUFFERS;
@@ -599,8 +599,8 @@ bool ExynosCamera::initializeIspChain(void)
     cam_int_init_isp(&m_streamInfo.isp, &m_streamInfo.sensor0);
 
     /* initialize ScalerC */
-    m_streamInfo.scc.width = m_cameraInfo->videoW;
-    m_streamInfo.scc.height = m_cameraInfo->videoH;
+    m_streamInfo.scc.width = m_cameraInfo->videoSize.width;
+    m_streamInfo.scc.height = m_cameraInfo->videoSize.height;
     m_streamInfo.scc.format = V4L2_PIX_FMT_YUYV;
     m_streamInfo.scc.planes = 2;
     m_streamInfo.scc.buffers = NUM_SCC_BUFFERS;
