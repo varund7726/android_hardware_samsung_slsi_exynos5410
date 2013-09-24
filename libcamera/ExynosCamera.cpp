@@ -432,7 +432,7 @@ bool ExynosCamera::create(int cameraId)
         m_cameraInfo = new ExynosCameraInfoS5K6B2();
     }
 
-    // TODO: setup ISP chain here?
+    initializeIspChain();
 
     return true;
 }
@@ -572,15 +572,15 @@ bool ExynosCamera::initializeIspChain(void)
     int ret;
 
     ret = cam_int_open_node(&m_streamInfo.sensor0, VIDEO_NODE_SENSOR0);
-    ret = cam_int_open_node(&m_streamInfo.is3a1, VIDEO_NODE_IS3A1);
     ret = cam_int_open_node(&m_streamInfo.isp, VIDEO_NODE_ISP);
+    ret = cam_int_open_node(&m_streamInfo.is3a1, VIDEO_NODE_IS3A1);
     ret = cam_int_open_node(&m_streamInfo.scc, VIDEO_NODE_SCALERC);
     ret = cam_int_open_node(&m_streamInfo.scp, VIDEO_NODE_SCALERP);
 
     /* initialize sensor0 */
     m_streamInfo.sensor0.width = m_cameraInfo->pictureSize.width;
     m_streamInfo.sensor0.height = m_cameraInfo->pictureSize.height;
-    m_streamInfo.sensor0.format = V4L2_PIX_FMT_SBGGR16;
+    m_streamInfo.sensor0.format = m_cameraInfo->pictureFormat;
     m_streamInfo.sensor0.planes = 2;
     m_streamInfo.sensor0.buffers = NUM_SENSOR_BUFFERS;
     m_streamInfo.sensor0.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
@@ -595,18 +595,28 @@ bool ExynosCamera::initializeIspChain(void)
 
     // TODO: initialize IS3A1 ?
 
-    /* initialize ISP with sensor0 */
-    cam_int_init_isp(&m_streamInfo.isp, &m_streamInfo.sensor0);
-
     /* initialize ScalerC */
     m_streamInfo.scc.width = m_cameraInfo->videoSize.width;
     m_streamInfo.scc.height = m_cameraInfo->videoSize.height;
-    m_streamInfo.scc.format = V4L2_PIX_FMT_YUYV;
+    m_streamInfo.scc.format = m_cameraInfo->videoFormat;
     m_streamInfo.scc.planes = 2;
     m_streamInfo.scc.buffers = NUM_SCC_BUFFERS;
     m_streamInfo.scc.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
     m_streamInfo.scc.memory = V4L2_MEMORY_DMABUF;
     m_streamInfo.scc.status = false;
+
+    /* initialize ScalerP */
+    m_streamInfo.scp.width = m_cameraInfo->previewSize.width;
+    m_streamInfo.scp.height = m_cameraInfo->previewSize.height;
+    m_streamInfo.scp.format = m_cameraInfo->previewFormat;
+    m_streamInfo.scp.planes = 2;
+    m_streamInfo.scp.buffers = NUM_SCP_BUFFERS;
+    m_streamInfo.scp.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+    m_streamInfo.scp.memory = V4L2_MEMORY_DMABUF;
+    m_streamInfo.scp.status = false;
+
+    /* initialize ISP with sensor0 */
+    cam_int_init_isp(&m_streamInfo.isp, &m_streamInfo.sensor0);
 
     return true;
 
