@@ -413,19 +413,32 @@ ExynosCamera::ExynosCamera()
 
 ExynosCamera::~ExynosCamera()
 {
-
+    delete m_cameraInfo;
 }
 
 bool ExynosCamera::create(int cameraId)
 {
-    // TODO: switch cameras depending on cameraId
+    m_cameraId = cameraId;
+
+    if (m_cameraInfo) {
+        delete m_cameraInfo;
+    }
+
+    if (cameraId == CAMERA_ID_BACK) {
+        m_streamInfo.sensor_id = SENSOR_NAME_IMX135;
+        m_cameraInfo = new ExynosCameraInfoIMX135();
+    } else {
+        m_streamInfo.sensor_id = SENSOR_NAME_S5K6B2;
+        m_cameraInfo = new ExynosCameraInfoS5K6B2();
+    }
+
+    // TODO: setup ISP chain here?
 
     return true;
 }
 
 bool ExynosCamera::destroy()
 {
-
     return true;
 }
 
@@ -572,14 +585,6 @@ void ExynosCamera::getParameters(CameraParameters *p)
 bool ExynosCamera::initializeIspChain(void)
 {
     int ret;
-
-    if (m_cameraId == 0) {
-        m_streamInfo.sensor_id = SENSOR_NAME_IMX135;
-        m_cameraInfo = new ExynosCameraInfoIMX135;
-    } else {
-        m_streamInfo.sensor_id = SENSOR_NAME_S5K6B2;
-        m_cameraInfo = new ExynosCameraInfoS5K6B2;
-    }
 
     ret = cam_int_open_node(&m_streamInfo.sensor0, VIDEO_NODE_SENSOR0);
     ret = cam_int_open_node(&m_streamInfo.is3a1, VIDEO_NODE_IS3A1);

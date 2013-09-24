@@ -255,6 +255,16 @@ ExynosCameraHWInterface::ExynosCameraHWInterface(int cameraId,
 
     ALOGV("DEBUG(%s):" __FUNCTION__);
 
+    m_camera = ExynosCamera::createInstance();
+    ret = m_camera->create(cameraId);
+    if (!ret) {
+        ALOGE("ERR(%s): Failed to create internal camera for camera %d",
+                __FUNCTION__, cameraId);
+    }
+
+    // initialize parameters
+    m_camera->getParameters(&m_params);
+
     if (!m_grallocHal) {
         ret = hw_get_module(GRALLOC_HARDWARE_MODULE_ID,
                 (const hw_module_t **) &m_grallocHal);
