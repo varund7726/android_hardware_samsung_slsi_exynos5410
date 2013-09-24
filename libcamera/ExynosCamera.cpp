@@ -510,7 +510,7 @@ bool ExynosCamera::getPreviewBuffer(ExynosBuffer *buf)
         return false;
     }
 
-    if (previewStream->buffers <= v4l2_buf.index) {
+    if ((unsigned int) previewStream->buffers <= v4l2_buf.index) {
         ALOGE("ERR(%s): index out of range (%d/%d)",
                 __FUNCTION__, v4l2_buf.index, previewStream->buffers);
         return false;
