@@ -107,9 +107,6 @@ public:
     int                     getPreviewWidth(void);
     int                     getPreviewHeight(void);
     int                     getPreviewColorFormat(void);
-    int                     getHardwarePreviewWidth(void);
-    int                     getHardwarePreviewHeight(void);
-    int                     getHardwarePreviewColorFormat(void);
     int                     getPreviewNumBuffers(void);
 
     bool                    setPreviewBuffer(ExynosBuffer *buf);
@@ -125,10 +122,6 @@ private:
     int                     m_cameraId;
     ExynosCameraInfo       *m_cameraInfo;
     camera_hw_info_t        m_streamInfo;
-
-    int                     m_previewWidth;
-    int                     m_previewHeight;
-    int                     m_previewColorFormat;
 
     ion_client              m_ionClient;
 };
