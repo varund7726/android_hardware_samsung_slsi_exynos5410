@@ -129,7 +129,7 @@ bool ExynosCameraHWInterface::m_previewThreadProcessBuffers(void)
 
     /* Get buffer */
     ret = m_camera->getPreviewBuffer(&buf);
-    if (ret != 0) {
+    if (!ret) {
         ALOGE("ERR(%s): getPreviewBuffer failed, err = %d", __FUNCTION__, ret);
         return false;
     }
@@ -442,7 +442,12 @@ status_t ExynosCameraHWInterface::startPreview(void)
     }
 
     for (int i = numBuffers - m_minUndequeuedBufs; i < numBuffers; i++) {
-        m_camera->getPreviewBuffer(&buf);
+        ret = m_camera->getPreviewBuffer(&buf);
+        if (!ret) {
+            ALOGE("ERR(%s): Failed to get preview buffer[%d]!!",
+                    __FUNCTION__, i);
+             continue;
+        }
 
         previewBuf = &m_previewBuffers[buf.reserved.p];
         if (m_grallocHal && previewBuf->locked) {
