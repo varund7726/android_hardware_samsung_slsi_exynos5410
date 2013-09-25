@@ -117,6 +117,8 @@ bool ExynosCameraHWInterface::m_previewThreadProcessBuffers(void)
     int stride;
     void *vaddr[3];
 
+    ALOGD("DEBUG(%s): entering", __FUNCTION__);
+
     if (!m_previewWindow) {
         ALOGE("ERR(%s) preview window not initialized!", __FUNCTION__);
         return false;
@@ -222,12 +224,14 @@ bool ExynosCameraHWInterface::m_previewThreadProcessBuffers(void)
 
 bool ExynosCameraHWInterface::m_previewThreadProcessCallbacks(void)
 {
+    ALOGD("DEBUG(%s): entering", __FUNCTION__);
+
     return false;
 }
 
 bool ExynosCameraHWInterface::m_previewThreadFunc(void)
 {
-    ALOGV("DEBUG(%s): starting", __FUNCTION__);
+    ALOGD("DEBUG(%s): starting", __FUNCTION__);
 
     while (true) {
         if (m_previewExit) {
@@ -284,7 +288,7 @@ status_t ExynosCameraHWInterface::setPreviewWindow(preview_stream_ops *w)
     int ret;
     int width, height, fmt, num_buf;
 
-    ALOGV("DEBUG(%s): preview window %p", __FUNCTION__, w);
+    ALOGD("DEBUG(%s): preview window %p", __FUNCTION__, w);
 
     if (!w) {
         m_previewWindow = NULL;
@@ -340,6 +344,8 @@ void ExynosCameraHWInterface::setCallbacks(camera_notify_callback notify_cb,
         camera_request_memory get_memory,
         void *user)
 {
+    ALOGD("DEBUG(%s): entering", __FUNCTION__);
+
     m_notifyCb = notify_cb;
     m_dataCb = data_cb;
     m_dataCbTimestamp = data_cb_timestamp;
@@ -349,16 +355,22 @@ void ExynosCameraHWInterface::setCallbacks(camera_notify_callback notify_cb,
 
 void ExynosCameraHWInterface::enableMsgType(int32_t msgType)
 {
+    ALOGD("DEBUG(%s): entering", __FUNCTION__);
+
     m_msgEnabled |= msgType;
 }
 
 void ExynosCameraHWInterface::disableMsgType(int32_t msgType)
 {
+    ALOGD("DEBUG(%s): entering", __FUNCTION__);
+
     m_msgEnabled &= (~msgType);
 }
 
 bool ExynosCameraHWInterface::msgTypeEnabled(int32_t msgType)
 {
+    ALOGD("DEBUG(%s): entering", __FUNCTION__);
+
     return ((m_msgEnabled & msgType) > 0);
 }
 
@@ -377,10 +389,15 @@ status_t ExynosCameraHWInterface::startPreview(void)
         fd[i] = 0;
     }
 
+    ALOGD("DEBUG(%s): entering", __FUNCTION__);
+
     format = m_camera->getPreviewColorFormat();
     width = m_camera->getPreviewWidth();
     height = m_camera->getPreviewHeight();
     numBuffers = m_camera->getPreviewNumBuffers();
+
+    ALOGD("DEBUG(%s): format: %d, dim: %dx%d, buffers: %d",
+            __FUNCTION__, format, width, height, numBuffers);
     for (int i = 0; i < numBuffers; i++) {
         previewBuf = &m_previewBuffers[i];
 
@@ -472,11 +489,13 @@ status_t ExynosCameraHWInterface::startPreview(void)
 
 void ExynosCameraHWInterface::stopPreview(void)
 {
-
+    ALOGD("DEBUG(%s): entering", __FUNCTION__);
 }
 
 status_t ExynosCameraHWInterface::setParameters(const CameraParameters &params)
 {
+    ALOGD("DEBUG(%s): entering", __FUNCTION__);
+
     // update internal parameter representation
     m_camera->setParameters(&params);
 
@@ -491,6 +510,8 @@ status_t ExynosCameraHWInterface::setParameters(const CameraParameters &params)
 
 CameraParameters ExynosCameraHWInterface::getParameters(void) const
 {
+    ALOGD("DEBUG(%s): entering", __FUNCTION__);
+
     ALOGD("DEBUG(%s): dumping parameters", __FUNCTION__);
     m_params.dump();
 
@@ -499,6 +520,8 @@ CameraParameters ExynosCameraHWInterface::getParameters(void) const
 
 int ExynosCameraHWInterface::getCameraId(void)
 {
+    ALOGD("DEBUG(%s): entering", __FUNCTION__);
+
     return m_cameraId;
 }
 
