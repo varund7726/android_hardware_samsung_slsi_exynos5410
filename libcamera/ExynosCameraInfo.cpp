@@ -807,7 +807,7 @@ int string_to_v4l2_format(const char *format)
 bool get_bool(const CameraParameters *p, const char *key)
 {
     const char *val = p->get(key);
-    if (strcmp(val, "true") == 0)
+    if (val && strcmp(val, "true") == 0)
         return true;
     return false;
 }
